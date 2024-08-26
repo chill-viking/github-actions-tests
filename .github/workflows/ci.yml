@@ -1,0 +1,32 @@
+name: 'Test .NET'
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: 'Test'
+    env:
+      NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+
+      - name: Restore dependencies
+        run: dotnet restore
+        working-directory: dotnet-sonar-scanner
+
+      - name: Run tests
+        run: dotnet test --configuration Release
+        working-directory: dotnet-sonar-scanner
